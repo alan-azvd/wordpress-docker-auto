@@ -1,0 +1,57 @@
+version: '3.3'
+
+services:
+
+  mariadb:
+    image: docker.io/bitnami/mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=WA#0902dt!.
+      - MARIADB_USER=wp_user
+      - MARIADB_PASSWORD=WA#0902dt!.
+      - MARIADB_DATABASE=wp_db
+    volumes:
+      - 'mariadb_data:/bitnami/mariadb'
+    networks:
+      - default
+	  
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: WA#0902dt!.
+      WORDPRESS_DB_NAME: wp_db
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - traefik-public
+      - default
+    depends_on:
+      - mariadb
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.isttore-${STORE}-http.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)
+        - traefik.http.routers.isttore-${STORE}-http.entrypoints=http
+        - traefik.http.routers.isttore-${STORE}-http.middlewares=https-redirect
+        - traefik.http.routers.isttore-${STORE}-https.rule=Host(`${DOMAIN}`) || Host(`www.${DOMAIN}`)
+        - traefik.http.routers.isttore-${STORE}-https.entrypoints=https
+        - traefik.http.routers.isttore-${STORE}-https.tls=true
+        - traefik.http.routers.isttore-${STORE}-https.tls.certresolver=le
+        - traefik.http.services.isttore-${STORE}.loadbalancer.server.port=8080
+
+volumes:
+  mariadb_data:
+    driver: local
+  wordpress_data:
+    driver: local
+
+networks:
+  traefik-public:
+    external: true
+  default:
