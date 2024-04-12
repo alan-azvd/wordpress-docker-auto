@@ -13,7 +13,7 @@ services:
       - 'mariadb_data:/bitnami/mariadb'
     networks:
       - default
-	  
+
   wordpress:
     image: wordpress
     restart: always
