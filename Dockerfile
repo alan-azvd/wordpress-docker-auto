@@ -1,3 +1,3 @@
-from arm64v8/wordpress
+from wordpress
 
 ADD php.ini $PHP_INI_DIR/php.ini
