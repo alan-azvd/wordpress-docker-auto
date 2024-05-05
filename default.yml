@@ -15,7 +15,7 @@ services:
       - default
 
   wordpress:
-    hostname: lucioadvogado.com
+    hostname: ${DOMAIN}
     build: .
     environment:
       WORDPRESS_DB_HOST: mariadb
