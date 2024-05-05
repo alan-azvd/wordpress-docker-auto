@@ -16,6 +16,7 @@ services:
 
   wordpress:
     hostname: ${DOMAIN}
+    image: isttore-wordpress
     build: .
     environment:
       WORDPRESS_DB_HOST: mariadb
